@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabTrack — Equipment Issue &amp; Return</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16232c;
+  --paper:#eef2f0;
+  --panel:#ffffff;
+  --steel:#3c6e71;
+  --steel-dark:#2a4f52;
+  --amber:#d98e04;
+  --rust:#b23a2f;
+  --moss:#4c7a3f;
+  --line:#c7d0ce;
+  --line-soft:#dfe6e3;
+  --muted:#5c6b6c;
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:var(--font-body);
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer;}
+input,select{font-family:inherit;}
+::selection{background:var(--amber);color:var(--ink);}
+
+/* ================= LOGIN SCREEN ================= */
+#loginScreen{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+@media (max-width:860px){ #loginScreen{grid-template-columns:1fr;} }
+
+.login-brand{
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,0.06), transparent 40%),
+    linear-gradient(155deg,var(--ink),var(--steel-dark) 70%);
+  color:#f2f5f4;
+  padding:56px 48px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.brand-mark{
+  font-family:var(--font-mono);
+  font-size:13px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:#9fb8b6;
+  border:1px solid rgba(255,255,255,.25);
+  padding:6px 10px;
+  display:inline-block;
+  width:max-content;
+}
+.brand-headline{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:clamp(32px,4vw,48px);
+  line-height:1.08;
+  margin-top:40px;
+  max-width:9.5em;
+}
+.brand-sub{
+  font-family:var(--font-mono);
+  font-size:14px;
+  color:#c3d3d1;
+  margin-top:18px;
+  max-width:32ch;
+  line-height:1.6;
+}
+.tag-float{
+  position:absolute;
+  border:1px solid rgba(255,255,255,.18);
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:#8fa9a7;
+  padding:8px 10px;
+  border-radius:2px;
+  background:rgba(255,255,255,.03);
+}
+.tag-float::before{
+  content:'';
+  position:absolute;
+  left:-1px;top:50%;
+  width:6px;height:6px;
+  background:var(--ink);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+.tag1{top:14%;right:8%;}
+.tag2{top:38%;right:22%;}
+.tag3{bottom:16%;right:10%;}
+
+.login-footer{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:#7f9694;
+  letter-spacing:.05em;
+}
+
+.login-form-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+}
+.login-form{
+  width:100%;
+  max-width:380px;
+}
+.form-eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.form-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:26px;
+  margin-top:6px;
+  margin-bottom:24px;
+}
+.role-tabs{
+  display:flex;
+  border:1px solid var(--line);
+  border-radius:6px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+.role-tab{
+  flex:1;
+  border:none;
+  background:var(--panel);
+  padding:10px 6px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--muted);
+  border-right:1px solid var(--line);
+  transition:.15s;
+}
+.role-tab:last-child{border-right:none;}
+.role-tab.active{background:var(--steel);color:#fff;}
+
+.field{margin-bottom:14px;}
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.field input{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  font-size:14px;
+  background:#fbfcfb;
+  outline:none;
+  transition:.15s;
+}
+.field input:focus{border-color:var(--steel);box-shadow:0 0 0 3px rgba(60,110,113,.15);}
+
+.btn-primary{
+  width:100%;
+  background:var(--ink);
+  color:#fff;
+  border:none;
+  padding:12px;
+  border-radius:5px;
+  font-weight:600;
+  font-size:14px;
+  margin-top:6px;
+  transition:.15s;
+}
+.btn-primary:hover{background:var(--steel-dark);}
+.btn-primary:focus-visible, button:focus-visible, .role-tab:focus-visible{outline:2px solid var(--steel);outline-offset:2px;}
+
+.login-error{
+  font-family:var(--font-mono);
+  font-size:12.5px;
+  color:var(--rust);
+  margin-top:12px;
+  min-height:16px;
+}
+.demo-box{
+  margin-top:26px;
+  border:1px dashed var(--line);
+  border-radius:6px;
+  padding:12px 14px;
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.demo-box b{color:var(--ink);}
+
+/* ================= APP SHELL ================= */
+#app{display:none;min-height:100vh;}
+#app.active{display:grid;grid-template-columns:230px 1fr;}
+@media (max-width:760px){ #app.active{grid-template-columns:1fr;} #sidebar{display:none;} }
+
+#sidebar{
+  background:var(--ink);
+  color:#dfe8e6;
+  padding:26px 18px;
+  display:flex;
+  flex-direction:column;
+}
+.side-logo{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#9fb8b6;
+  border:1px solid rgba(255,255,255,.2);
+  padding:5px 8px;
+  width:max-content;
+  margin-bottom:30px;
+}
+.side-role{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  color:#8fa9a7;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:2px;
+}
+.side-user{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:16px;
+  margin-bottom:26px;
+}
+.nav-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 10px;
+  border-radius:5px;
+  font-size:13.5px;
+  font-weight:500;
+  color:#c3d3d1;
+  border:none;
+  background:none;
+  text-align:left;
+  width:100%;
+  margin-bottom:2px;
+  transition:.12s;
+}
+.nav-item .dot{width:6px;height:6px;border-radius:50%;background:#5a7472;flex-shrink:0;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.nav-item.active{background:var(--steel);color:#fff;}
+.nav-item.active .dot{background:var(--amber);}
+
+.side-bottom{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);}
+.btn-logout{
+  width:100%;
+  background:none;
+  border:1px solid rgba(255,255,255,.25);
+  color:#dfe8e6;
+  padding:9px;
+  border-radius:5px;
+  font-size:12.5px;
+  font-weight:600;
+}
+.btn-logout:hover{background:rgba(255,255,255,.08);}
+
+#main{padding:30px 38px 60px;overflow-x:hidden;}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:28px;
+  flex-wrap:wrap;
+  gap:14px;
+}
+.page-eyebrow{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.page-title{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:26px;
+  margin-top:4px;
+}
+.chip{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:6px 12px;
+  color:var(--muted);
+  background:var(--panel);
+}
+
+.view{display:none;}
+.view.active{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---- Asset tag equipment cards ---- */
+.tag-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:16px;
+  margin-bottom:10px;
+}
+.asset-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px 16px 14px;
+  position:relative;
+}
+.asset-card::before{
+  content:'';
+  position:absolute;
+  top:16px;left:-1px;
+  width:10px;height:10px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:50%;
+  transform:translateX(-50%);
+}
+.asset-id{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.05em;
+}
+.asset-name{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:16.5px;
+  margin-top:4px;
+}
+.asset-cat{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.asset-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:14px;
+}
+.asset-qty{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);}
+.stamp{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  padding:4px 9px;
+  border-radius:3px;
+  transform:rotate(-3deg);
+  display:inline-block;
+  border:1.5px solid currentColor;
+}
+.stamp.Available{color:var(--moss);}
+.stamp.Issued{color:var(--amber);}
+.stamp.Damaged{color:var(--rust);}
+.asset-actions{margin-top:14px;display:flex;gap:8px;}
+
+/* ---- Buttons ---- */
+.btn{
+  border:1px solid var(--line);
+  background:var(--panel);
+  padding:8px 13px;
+  border-radius:5px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--ink);
+  transition:.12s;
+}
+.btn:hover{border-color:var(--steel);color:var(--steel-dark);}
+.btn-fill{background:var(--steel);color:#fff;border-color:var(--steel);}
+.btn-fill:hover{background:var(--steel-dark);color:#fff;}
+.btn-danger{background:none;color:var(--rust);border-color:var(--rust);}
+.btn-danger:hover{background:var(--rust);color:#fff;}
+.btn-sm{padding:6px 10px;font-size:11.5px;}
+.btn-block{width:100%;}
+
+/* ---- Tables ---- */
+.table-wrap{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:22px;
+}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{
+  text-align:left;
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted);
+  background:var(--paper);
+  padding:11px 14px;
+  border-bottom:1px solid var(--line);
+}
+tbody td{
+  padding:12px 14px;
+  border-bottom:1px solid var(--line-soft);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fbfcfb;}
+td.mono, .mono{font-family:var(--font-mono);font-size:12.5px;}
+.empty-row td{
+  text-align:center;
+  padding:28px;
+  color:var(--muted);
+  font-family:var(--font-mono);
+  font-size:12.5px;
+}
+
+.badge{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  font-weight:600;
+  padding:4px 9px;
+  border-radius:20px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  display:inline-block;
+}
+.badge.Pending{background:#fbe9c8;color:#8a5c02;}
+.badge.Approved,.badge.Issued{background:#dcecdc;color:var(--moss);}
+.badge.Rejected,.badge.Damaged,.badge.Lost{background:#f6dcd8;color:var(--rust);}
+.badge.Closed{background:#e2e7e6;color:var(--muted);}
+.badge.Good{background:#dcecdc;color:var(--moss);}
+.badge.Overdue{background:#f6dcd8;color:var(--rust);}
+
+/* ---- Section blocks ---- */
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+.section-title{font-family:var(--font-display);font-weight:600;font-size:16px;}
+.card-box{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:22px;
+  margin-bottom:22px;
+}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+.stat{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px 20px;
+  min-width:130px;
+  flex:1;
+}
+.stat-num{font-family:var(--font-display);font-weight:700;font-size:26px;}
+.stat-label{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:2px;}
+
+/* ---- Forms inline ---- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media (max-width:600px){ .form-grid{grid-template-columns:1fr;} }
+.toast{
+  position:fixed;
+  bottom:22px;right:22px;
+  background:var(--ink);
+  color:#fff;
+  padding:12px 18px;
+  border-radius:6px;
+  font-size:13px;
+  font-family:var(--font-mono);
+  box-shadow:0 8px 24px rgba(0,0,0,.2);
+  transform:translateY(20px);
+  opacity:0;
+  transition:.25s;
+  pointer-events:none;
+  z-index:50;
+  max-width:300px;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.err{background:var(--rust);}
+
+.empty-state{
+  text-align:center;
+  padding:50px 20px;
+  color:var(--muted);
+}
+.empty-state .glyph{
+  width:44px;height:44px;
+  border:1.5px dashed var(--line);
+  border-radius:50%;
+  margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:16px;color:var(--muted);
+}
+.empty-state p{font-size:13px;max-width:32ch;margin:0 auto;}
+
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div>
+      <span class="brand-mark">LabTrack · Asset Registry</span>
+      <div class="brand-headline">Every instrument,<br>tagged and traced.</div>
+      <div class="brand-sub">Issue and return management for shared lab equipment — from request to inventory reconciliation.</div>
+    </div>
+    <div class="tag-float tag1">EQ‑014 · OSCILLOSCOPE</div>
+    <div class="tag-float tag2">EQ‑032 · CALIPER SET</div>
+    <div class="tag-float tag3">EQ‑007 · MULTIMETER</div>
+    <div class="login-footer">DEPT. OF ELECTRICAL &amp; ELECTRONIC ENGINEERING</div>
+  </div>
+
+  <div class="login-form-wrap">
+    <div class="login-form">
+      <div class="form-eyebrow">Sign in</div>
+      <div class="form-title">Access your workspace</div>
+
+      <div class="role-tabs" role="tablist" aria-label="Select role">
+        <button class="role-tab active" data-role="student" role="tab" aria-selected="true">Student</button>
+        <button class="role-tab" data-role="officer" role="tab" aria-selected="false">Lab Officer</button>
+        <button class="role-tab" data-role="admin" role="tab" aria-selected="false">Dept Admin</button>
+      </div>
+
+      <form id="loginForm">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <input id="loginPass" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn-primary" type="submit">Log in</button>
+        <div class="login-error" id="loginError"></div>
+      </form>
+
+      <div class="demo-box" id="demoBox">
+        <b>Demo account</b> — student<br>
+        rafi@example.com · pass123
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app">
+  <aside id="sidebar">
+    <div class="side-logo">LabTrack</div>
+    <div class="side-role" id="sideRole">Role</div>
+    <div class="side-user" id="sideUser">Name</div>
+    <nav id="sideNav"></nav>
+    <div class="side-bottom">
+      <button class="btn-logout" id="logoutBtn">Log out</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="topbar">
+      <div>
+        <div class="page-eyebrow" id="pageEyebrow">Overview</div>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+      </div>
+      <div class="chip" id="dateChip">—</div>
+    </div>
+
+    <!-- ===== STUDENT VIEWS ===== -->
+    <section class="view" id="view-browse">
+      <div class="stat-row" id="studentStats"></div>
+      <div class="section-head">
+        <div class="section-title">Available equipment</div>
+      </div>
+      <div class="tag-grid" id="equipGridStudent"></div>
+    </section>
+
+    <section class="view" id="view-myrequests">
+      <div class="section-head"><div class="section-title">My requests</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Req ID</th><th>Equipment</th><th>Qty</th><th>Issue date</th><th>Due date</th><th>Status</th><th></th></tr></thead>
+        <tbody id="myRequestsBody"></tbody>
+      </table></div>
+    </section>
+
+    <section class="view" id="view-history">
+      <div class="section-head"><div class="section-title">Borrowing history</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Req ID</th><th>Equipment</th><th>Qty</th><th>Issue date</th><th>Due date</th><th>Status</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table></div>
+    </section>
+
+    <!-- ===== OFFICER VIEWS ===== -->
+    <section class="view" id="view-pending">
+      <div class="stat-row" id="officerStats"></div>
+      <div class="section-head"><div class="section-title">Pending requests</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Req ID</th><th>Student</th><th>Equipment</th><th>Qty</th><th>Due date</th><th></th></tr></thead>
+        <tbody id="pendingBody"></tbody>
+      </table></div>
+    </section>
+
+    <section class="view" id="view-verify">
+      <div class="section-head"><div class="section-title">Returns awaiting verification</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Return ID</th><th>Req ID</th><th>Return date</th><th>Condition</th><th>Overdue</th><th></th></tr></thead>
+        <tbody id="verifyBody"></tbody>
+      </table></div>
+    </section>
+
+    <section class="view" id="view-damage">
+      <div class="section-head"><div class="section-title">Record equipment damage</div></div>
+      <div class="card-box">
+        <div class="form-grid">
+          <div class="field">
+            <label for="damageEquip">Equipment</label>
+            <select id="damageEquip"></select>
+          </div>
+          <div class="field">
+            <label for="damageNotes">Damage notes</label>
+            <input id="damageNotes" placeholder="e.g. cracked display, tested and non-functional">
+          </div>
+        </div>
+        <button class="btn btn-fill" id="recordDamageBtn">Mark as damaged</button>
+      </div>
+      <div class="section-head"><div class="section-title">Inventory status</div></div>
+      <div class="tag-grid" id="equipGridOfficer"></div>
+    </section>
+
+    <!-- ===== ADMIN VIEWS ===== -->
+    <section class="view" id="view-inventory">
+      <div class="stat-row" id="adminStats"></div>
+      <div class="section-head">
+        <div class="section-title">Add equipment</div>
+      </div>
+      <div class="card-box">
+        <div class="form-grid">
+          <div class="field"><label for="addName">Name</label><input id="addName" placeholder="e.g. Function Generator"></div>
+          <div class="field"><label for="addCat">Category</label><input id="addCat" placeholder="e.g. Electronics"></div>
+          <div class="field"><label for="addQty">Quantity</label><input id="addQty" type="number" min="0" value="1"></div>
+        </div>
+        <button class="btn btn-fill" id="addEquipBtn">Add to inventory</button>
+      </div>
+      <div class="section-head"><div class="section-title">Inventory</div></div>
+      <div class="tag-grid" id="equipGridAdmin"></div>
+    </section>
+
+    <section class="view" id="view-users">
+      <div class="section-head"><div class="section-title">Registered users</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>User ID</th><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+        <tbody id="usersBody"></tbody>
+      </table></div>
+    </section>
+
+    <section class="view" id="view-reports">
+      <div class="section-head"><div class="section-title">Issue &amp; return report</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Req ID</th><th>Student</th><th>Equipment</th><th>Qty</th><th>Due date</th><th>Status</th></tr></thead>
+        <tbody id="reportIssueBody"></tbody>
+      </table></div>
+
+      <div class="section-head"><div class="section-title">Overdue report</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Req ID</th><th>Student</th><th>Equipment</th><th>Due date</th><th>Status</th></tr></thead>
+        <tbody id="reportOverdueBody"></tbody>
+      </table></div>
+
+      <div class="section-head"><div class="section-title">Damage report</div></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Return ID</th><th>Req ID</th><th>Return date</th><th>Condition</th></tr></thead>
+        <tbody id="reportDamageBody"></tbody>
+      </table></div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   MOCK DATA — mirrors the C++ backend's seeded state
+   ============================================================ */
+const state = {
+  currentUser: null, // {userID, name, email, role, studentID/officerID/adminID}
+  users: [
+    {userID:'U1', name:'Rafi Islam', email:'rafi@example.com', password:'pass123', role:'student', roleID:'S1001'},
+    {userID:'U2', name:'Nadia Karim', email:'nadia@example.com', password:'pass123', role:'officer', roleID:'OFC01'},
+    {userID:'U3', name:'Dr. Hasan', email:'hasan@example.com', password:'pass123', role:'admin', roleID:'ADM01'},
+  ],
+  equipment: [
+    {id:'EQ1', name:'Digital Multimeter', category:'Electronics', status:'Available', quantity:10},
+    {id:'EQ2', name:'Oscilloscope', category:'Electronics', status:'Available', quantity:4},
+    {id:'EQ3', name:'Soldering Iron', category:'Tools', status:'Available', quantity:15},
+  ],
+  requests: [
+    {id:'REQ1', studentID:'S1001', studentName:'Rafi Islam', equipID:'EQ2', qty:1, issueDate:'2026-08-02', dueDate:'2026-08-09', status:'Issued'},
+  ],
+  returns: [],
+  counters:{equip:4, req:2, ret:1},
+};
+
+function todayStr(){
+  const d=new Date();
+  return d.toISOString().slice(0,10);
+}
+document.getElementById('dateChip').textContent = todayStr();
+
+function toast(msg, isErr){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+let selectedRole='student';
+const demoCreds={
+  student:{label:'student', email:'rafi@example.com'},
+  officer:{label:'lab officer', email:'nadia@example.com'},
+  admin:{label:'dept admin', email:'hasan@example.com'},
+};
+document.querySelectorAll('.role-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.role-tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false');});
+    tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+    selectedRole=tab.dataset.role;
+    const c=demoCreds[selectedRole];
+    document.getElementById('demoBox').innerHTML=`<b>Demo account</b> — ${c.label}<br>${c.email} · pass123`;
+  });
+});
+
+document.getElementById('loginForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPass').value.trim();
+  const user=state.users.find(u=>u.email.toLowerCase()===email && u.password===pass);
+  const errEl=document.getElementById('loginError');
+  if(!user){ errEl.textContent='Invalid email or password.'; return; }
+  if(user.role!==selectedRole){ errEl.textContent=`This account is registered as ${user.role}, not ${selectedRole}.`; return; }
+  errEl.textContent='';
+  state.currentUser=user;
+  enterApp();
+});
+
+function quickFillDemo(){
+  document.getElementById('loginEmail').value=demoCreds[selectedRole].email;
+  document.getElementById('loginPass').value='pass123';
+}
+document.getElementById('demoBox').addEventListener('click', quickFillDemo);
+
+/* ============================================================
+   APP SHELL / NAV
+   ============================================================ */
+const NAV={
+  student:[
+    {key:'browse', label:'Browse equipment', view:'view-browse', title:'Browse equipment', eyebrow:'Student workspace'},
+    {key:'myrequests', label:'My requests', view:'view-myrequests', title:'My requests', eyebrow:'Student workspace'},
+    {key:'history', label:'Borrowing history', view:'view-history', title:'Borrowing history', eyebrow:'Student workspace'},
+  ],
+  officer:[
+    {key:'pending', label:'Pending requests', view:'view-pending', title:'Pending requests', eyebrow:'Lab officer workspace'},
+    {key:'verify', label:'Verify returns', view:'view-verify', title:'Verify returned items', eyebrow:'Lab officer workspace'},
+    {key:'damage', label:'Record damage', view:'view-damage', title:'Record damage', eyebrow:'Lab officer workspace'},
+  ],
+  admin:[
+    {key:'inventory', label:'Inventory', view:'view-inventory', title:'Manage inventory', eyebrow:'Department admin workspace'},
+    {key:'users', label:'Users', view:'view-users', title:'Registered users', eyebrow:'Department admin workspace'},
+    {key:'reports', label:'Reports', view:'view-reports', title:'Reports', eyebrow:'Department admin workspace'},
+  ],
+};
+const roleLabel={student:'Student', officer:'Lab officer', admin:'Department admin'};
+
+function enterApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').classList.add('active');
+  document.getElementById('sideRole').textContent=roleLabel[state.currentUser.role];
+  document.getElementById('sideUser').textContent=state.currentUser.name;
+  buildNav();
+  renderAll();
+}
+
+function buildNav(){
+  const nav=document.getElementById('sideNav');
+  nav.innerHTML='';
+  NAV[state.currentUser.role].forEach((item,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-item'+(i===0?' active':'');
+    btn.innerHTML=`<span class="dot"></span>${item.label}`;
+    btn.addEventListener('click', ()=>switchView(item.key));
+    btn.dataset.key=item.key;
+    nav.appendChild(btn);
+  });
+  switchView(NAV[state.currentUser.role][0].key);
+}
+
+function switchView(key){
+  const item=NAV[state.currentUser.role].find(n=>n.key===key);
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.key===key));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(item.view).classList.add('active');
+  document.getElementById('pageTitle').textContent=item.title;
+  document.getElementById('pageEyebrow').textContent=item.eyebrow;
+  renderAll();
+}
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  state.currentUser=null;
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginScreen').style.display='grid';
+  document.getElementById('loginForm').reset();
+  document.getElementById('loginError').textContent='';
+});
+
+/* ============================================================
+   RENDER HELPERS
+   ============================================================ */
+function findEquip(id){ return state.equipment.find(e=>e.id===id); }
+function findReq(id){ return state.requests.find(r=>r.id===id); }
+
+function assetCard(e, actionsHtml){
+  return `<div class="asset-card">
+    <div class="asset-id">${e.id}</div>
+    <div class="asset-name">${e.name}</div>
+    <div class="asset-cat">${e.category}</div>
+    <div class="asset-meta">
+      <span class="asset-qty">${e.quantity} in stock</span>
+      <span class="stamp ${e.status}">${e.status}</span>
+    </div>
+    ${actionsHtml?`<div class="asset-actions">${actionsHtml}</div>`:''}
+  </div>`;
+}
+
+function renderAll(){
+  if(!state.currentUser) return;
+  if(state.currentUser.role==='student') renderStudent();
+  if(state.currentUser.role==='officer') renderOfficer();
+  if(state.currentUser.role==='admin') renderAdmin();
+}
+
+/* ---------------- STUDENT ---------------- */
+function renderStudent(){
+  const sid=state.currentUser.roleID;
+  const myReqs=state.requests.filter(r=>r.studentID===sid);
+  const activeCount=myReqs.filter(r=>r.status==='Issued').length;
+  const pendingCount=myReqs.filter(r=>r.status==='Pending').length;
+
+  document.getElementById('studentStats').innerHTML=`
+    <div class="stat"><div class="stat-num">${activeCount}</div><div class="stat-label">Currently borrowed</div></div>
+    <div class="stat"><div class="stat-num">${pendingCount}</div><div class="stat-label">Pending requests</div></div>
+    <div class="stat"><div class="stat-num">${myReqs.length}</div><div class="stat-label">Total requests</div></div>
+  `;
+
+  document.getElementById('equipGridStudent').innerHTML = state.equipment.map(e=>{
+    const disabled = e.quantity<1 ? 'disabled' : '';
+    return assetCard(e, `<button class="btn btn-fill btn-sm request-btn" data-id="${e.id}" ${disabled}>${e.quantity<1?'Out of stock':'Request'}</button>`);
+  }).join('');
+  document.querySelectorAll('.request-btn').forEach(b=>b.addEventListener('click', ()=>requestEquipment(b.dataset.id)));
+
+  const myBody=document.getElementById('myRequestsBody');
+  if(myReqs.length===0){
+    myBody.innerHTML=`<tr class="empty-row"><td colspan="7">No requests yet — browse equipment to submit one.</td></tr>`;
+  }else{
+    myBody.innerHTML=myReqs.map(r=>{
+      const e=findEquip(r.equipID);
+      const canReturn = r.status==='Issued';
+      return `<tr>
+        <td class="mono">${r.id}</td>
+        <td>${e?e.name:r.equipID}</td>
+        <td class="mono">${r.qty}</td>
+        <td class="mono">${r.issueDate}</td>
+        <td class="mono">${r.dueDate}</td>
+        <td><span class="badge ${r.status}">${r.status}</span></td>
+        <td>${canReturn?`<button class="btn btn-sm return-btn" data-id="${r.id}">Return</button>`:''}</td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('.return-btn').forEach(b=>b.addEventListener('click', ()=>returnEquipment(b.dataset.id)));
+  }
+
+  const histBody=document.getElementById('historyBody');
+  histBody.innerHTML = myReqs.length===0
+    ? `<tr class="empty-row"><td colspan="6">No borrowing history yet.</td></tr>`
+    : myReqs.map(r=>{
+        const e=findEquip(r.equipID);
+        return `<tr>
+          <td class="mono">${r.id}</td><td>${e?e.name:r.equipID}</td><td class="mono">${r.qty}</td>
+          <td class="mono">${r.issueDate}</td><td class="mono">${r.dueDate}</td>
+          <td><span class="badge ${r.status}">${r.status}</span></td>
+        </tr>`;
+      }).join('');
+}
+
+function requestEquipment(equipID){
+  const e=findEquip(equipID);
+  if(!e || e.quantity<1){ toast('That item is currently out of stock.', true); return; }
+  const due=new Date(); due.setDate(due.getDate()+7);
+  const req={
+    id:'REQ'+(state.counters.req++),
+    studentID:state.currentUser.roleID,
+    studentName:state.currentUser.name,
+    equipID:equipID, qty:1,
+    issueDate:todayStr(),
+    dueDate:due.toISOString().slice(0,10),
+    status:'Pending'
+  };
+  state.requests.push(req);
+  toast(`Request ${req.id} submitted — pending officer approval.`);
+  renderAll();
+}
+
+function returnEquipment(reqID){
+  const r=findReq(reqID);
+  if(!r || r.status!=='Issued'){ toast('That request is not currently issued.', true); return; }
+  const overdue = r.dueDate < todayStr();
+  const rec={id:'RET'+(state.counters.ret++), requestID:reqID, returnDate:todayStr(), condition:'Good', overdue};
+  state.returns.push(rec);
+  r.status='Closed';
+  toast(`Return ${rec.id} logged${overdue?' (overdue)':''} — awaiting officer verification.`);
+  renderAll();
+}
+
+/* ---------------- OFFICER ---------------- */
+function renderOfficer(){
+  const pending=state.requests.filter(r=>r.status==='Pending');
+  const toVerify=state.returns.filter(r=>!r._verified);
+  const damaged=state.equipment.filter(e=>e.status==='Damaged').length;
+
+  document.getElementById('officerStats').innerHTML=`
+    <div class="stat"><div class="stat-num">${pending.length}</div><div class="stat-label">Pending requests</div></div>
+    <div class="stat"><div class="stat-num">${toVerify.length}</div><div class="stat-label">Returns to verify</div></div>
+    <div class="stat"><div class="stat-num">${damaged}</div><div class="stat-label">Damaged items</div></div>
+  `;
+
+  const pBody=document.getElementById('pendingBody');
+  pBody.innerHTML = pending.length===0
+    ? `<tr class="empty-row"><td colspan="6">No pending requests — you're all caught up.</td></tr>`
+    : pending.map(r=>{
+        const e=findEquip(r.equipID);
+        return `<tr>
+          <td class="mono">${r.id}</td><td>${r.studentName}</td><td>${e?e.name:r.equipID}</td>
+          <td class="mono">${r.qty}</td><td class="mono">${r.dueDate}</td>
+          <td>
+            <button class="btn btn-fill btn-sm approve-btn" data-id="${r.id}">Approve</button>
+            <button class="btn btn-danger btn-sm reject-btn" data-id="${r.id}">Reject</button>
+          </td>
+        </tr>`;
+      }).join('');
+  document.querySelectorAll('.approve-btn').forEach(b=>b.addEventListener('click', ()=>approveRequest(b.dataset.id)));
+  document.querySelectorAll('.reject-btn').forEach(b=>b.addEventListener('click', ()=>rejectRequest(b.dataset.id)));
+
+  const vBody=document.getElementById('verifyBody');
+  vBody.innerHTML = toVerify.length===0
+    ? `<tr class="empty-row"><td colspan="6">No returns waiting on verification.</td></tr>`
+    : toVerify.map(r=>`<tr>
+        <td class="mono">${r.id}</td><td class="mono">${r.requestID}</td><td class="mono">${r.returnDate}</td>
+        <td><span class="badge ${r.condition}">${r.condition}</span></td>
+        <td>${r.overdue?'<span class="badge Overdue">Yes</span>':'No'}</td>
+        <td><button class="btn btn-fill btn-sm verify-btn" data-id="${r.id}">Verify &amp; restock</button></td>
+      </tr>`).join('');
+  document.querySelectorAll('.verify-btn').forEach(b=>b.addEventListener('click', ()=>verifyReturn(b.dataset.id)));
+
+  const dmgSel=document.getElementById('damageEquip');
+  dmgSel.innerHTML=state.equipment.map(e=>`<option value="${e.id}">${e.id} — ${e.name}</option>`).join('');
+
+  document.getElementById('equipGridOfficer').innerHTML = state.equipment.map(e=>assetCard(e)).join('');
+}
+
+function approveRequest(reqID){
+  const r=findReq(reqID); if(!r) return;
+  const e=findEquip(r.equipID);
+  if(e && e.quantity>=r.qty){
+    e.quantity-=r.qty;
+    if(e.quantity===0) e.status='Issued';
+    r.status='Issued';
+    toast(`Request ${r.id} approved — equipment issued.`);
+  }else{
+    toast('Approved, but insufficient stock to issue right now.', true);
+    r.status='Approved';
+  }
+  renderAll();
+}
+function rejectRequest(reqID){
+  const r=findReq(reqID); if(!r) return;
+  r.status='Rejected';
+  toast(`Request ${r.id} rejected.`);
+  renderAll();
+}
+function verifyReturn(retID){
+  const rec=state.returns.find(x=>x.id===retID); if(!rec) return;
+  rec._verified=true;
+  const req=findReq(rec.requestID);
+  if(req){
+    const e=findEquip(req.equipID);
+    if(e && rec.condition==='Good'){
+      e.quantity+=req.qty;
+      e.status='Available';
+      toast(`${rec.id} verified — ${req.qty} unit(s) restocked.`);
+    }else if(e){
+      e.status='Damaged';
+      toast(`${rec.id} verified — item flagged, not restocked.`);
+    }
+  }
+  renderAll();
+}
+
+document.getElementById('recordDamageBtn').addEventListener('click', ()=>{
+  const id=document.getElementById('damageEquip').value;
+  const notes=document.getElementById('damageNotes').value.trim();
+  const e=findEquip(id);
+  if(!e){ toast('Select an item first.', true); return; }
+  e.status='Damaged';
+  document.getElementById('damageNotes').value='';
+  toast(`${e.id} marked damaged.${notes?' Notes recorded.':''}`);
+  renderAll();
+});
+
+/* ---------------- ADMIN ---------------- */
+function renderAdmin(){
+  const total=state.equipment.reduce((s,e)=>s+e.quantity,0);
+  const damaged=state.equipment.filter(e=>e.status==='Damaged').length;
+  const overdue=state.requests.filter(r=>r.status==='Issued' && r.dueDate<todayStr()).length;
+
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat"><div class="stat-num">${state.equipment.length}</div><div class="stat-label">Equipment types</div></div>
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-label">Units in stock</div></div>
+    <div class="stat"><div class="stat-num">${damaged}</div><div class="stat-label">Damaged</div></div>
+    <div class="stat"><div class="stat-num">${overdue}</div><div class="stat-label">Overdue</div></div>
+  `;
+
+  document.getElementById('equipGridAdmin').innerHTML = state.equipment.map(e=>
+    assetCard(e, `<button class="btn btn-danger btn-sm del-btn" data-id="${e.id}">Remove</button>`)
+  ).join('');
+  document.querySelectorAll('.del-btn').forEach(b=>b.addEventListener('click', ()=>{
+    state.equipment=state.equipment.filter(e=>e.id!==b.dataset.id);
+    toast('Equipment removed.');
+    renderAll();
+  }));
+
+  document.getElementById('usersBody').innerHTML = state.users.map(u=>`
+    <tr><td class="mono">${u.userID}</td><td>${u.name}</td><td>${u.email}</td><td>${roleLabel[u.role]}</td></tr>
+  `).join('');
+
+  document.getElementById('reportIssueBody').innerHTML = state.requests.length===0
+    ? `<tr class="empty-row"><td colspan="6">No requests recorded yet.</td></tr>`
+    : state.requests.map(r=>{
+        const e=findEquip(r.equipID);
+        return `<tr><td class="mono">${r.id}</td><td>${r.studentName}</td><td>${e?e.name:r.equipID}</td>
+          <td class="mono">${r.qty}</td><td class="mono">${r.dueDate}</td>
+          <td><span class="badge ${r.status}">${r.status}</span></td></tr>`;
+      }).join('');
+
+  const overdueReqs=state.requests.filter(r=>r.status==='Issued' && r.dueDate<todayStr());
+  document.getElementById('reportOverdueBody').innerHTML = overdueReqs.length===0
+    ? `<tr class="empty-row"><td colspan="5">No overdue items.</td></tr>`
+    : overdueReqs.map(r=>{
+        const e=findEquip(r.equipID);
+        return `<tr><td class="mono">${r.id}</td><td>${r.studentName}</td><td>${e?e.name:r.equipID}</td>
+          <td class="mono">${r.dueDate}</td><td><span class="badge Overdue">Overdue</span></td></tr>`;
+      }).join('');
+
+  const dmgReturns=state.returns.filter(r=>r.condition==='Damaged'||r.condition==='Lost');
+  document.getElementById('reportDamageBody').innerHTML = dmgReturns.length===0
+    ? `<tr class="empty-row"><td colspan="4">No damaged or lost items recorded.</td></tr>`
+    : dmgReturns.map(r=>`<tr><td class="mono">${r.id}</td><td class="mono">${r.requestID}</td>
+        <td class="mono">${r.returnDate}</td><td><span class="badge ${r.condition}">${r.condition}</span></td></tr>`).join('');
+}
+
+document.getElementById('addEquipBtn').addEventListener('click', ()=>{
+  const name=document.getElementById('addName').value.trim();
+  const cat=document.getElementById('addCat').value.trim();
+  const qty=parseInt(document.getElementById('addQty').value,10);
+  if(!name || !cat || !qty || qty<0){ toast('Fill in all fields with a valid quantity.', true); return; }
+  const eq={id:'EQ'+(state.counters.equip++), name, category:cat, status:'Available', quantity:qty};
+  state.equipment.push(eq);
+  document.getElementById('addName').value='';
+  document.getElementById('addCat').value='';
+  document.getElementById('addQty').value=1;
+  toast(`${eq.id} added to inventory.`);
+  renderAll();
+});
+</script>
+</body>
+</html>
